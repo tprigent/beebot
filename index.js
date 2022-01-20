@@ -1,6 +1,19 @@
+/* Requirements */
 const request = require('request');
 const constants = require('./APIroutes');
+const { Client, Intents, Channel } = require('discord.js');
+const config = require('./discordConfig.json');
 
+let debug = true;
+
+const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+client.once('ready', () => {
+    console.log('Ready!');
+});
+
+client.login(config.BOT_TOKEN);
+
+/* SigFox API */
 const url = "https://" + constants.APIlogin + ":" + constants.APIpassword + "@" + constants.messageRoute;
 
 request(
@@ -30,9 +43,9 @@ request(
 
 function hex_to_ascii(str1)
 {
-    var hex  = str1.toString();
-    var str = '';
-    for (var n = 0; n < hex.length; n += 2) {
+    const hex  = str1.toString();
+    let str = '';
+    for (let n = 0; n < hex.length; n += 2) {
         str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
     }
     return str;
