@@ -1,16 +1,22 @@
 {
   "name": "beebot",
   "version": "1.0.0",
-  "description": "",
+  "description": "Bot that links SigFox API and Discord",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tprigent/beebot.git"
+  },
   "author": "Théo Prigent",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tprigent/beebot/issues"
+  },
+  "homepage": "https://github.com/tprigent/beebot#readme",
   "dependencies": {
-    "discord": "^0.8.2",
     "discord.js": "^13.6.0",
     "request": "^2.88.2"
   }

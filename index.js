@@ -4,16 +4,9 @@ const constants = require('./APIroutes');
 const { Client, Intents, Channel } = require('discord.js');
 const config = require('./discordConfig.json');
 
-let debug = true;
+let debug = false;
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
-client.once('ready', () => {
-    console.log('Ready!');
-});
-
-const channel = client.channels.cache.get(config.CHANNEL_ID);
-channel.send('test');
-
 client.login(config.BOT_TOKEN);
 
 /* SigFox API */
@@ -31,7 +24,8 @@ request(
                 for(const it of data.data){
                     const date = new Date(it.time);
                     const parsedDate = date.getDay() + '/' + date.getMonth()+1 + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
-                    console.log(parsedDate + ' - ' + hex_to_ascii(it.data));
+                    const message = parsedDate + ' - ' + hex_to_ascii(it.data);
+                    notifyBot(debug, message);
                 }
 
             } catch (e) {
@@ -44,12 +38,21 @@ request(
     }
 );
 
-function hex_to_ascii(str1)
-{
+function hex_to_ascii(str1){
     const hex  = str1.toString();
     let str = '';
     for (let n = 0; n < hex.length; n += 2) {
         str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
     }
     return str;
+}
+
+function notifyBot(debug, msg){
+    client.on('ready', () => {
+        if(debug){
+            client.channels.cache.find(ch => ch.name === 'alertes-debug').send(msg);
+        } else {
+            client.channels.cache.find(ch => ch.name === 'alertes').send(msg);
+        }
+    });
 }
