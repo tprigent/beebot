@@ -7,36 +7,9 @@ const config = require('./discordConfig.json');
 let debug = false;
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
-client.login(config.BOT_TOKEN);
 
 /* SigFox API */
 const url = 'https://' + constants.APIlogin + ':' + constants.APIpassword + '@' + constants.messageRoute;
-
-request(
-    {
-        url : url
-    },
-    function (error, res, body) {
-        if (res.statusCode === 200) {
-            try {
-                const data = JSON.parse(body);
-
-                for(const it of data.data){
-                    const date = new Date(it.time);
-                    const parsedDate = date.getDay() + '/' + date.getMonth()+1 + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
-                    const message = parsedDate + ' - ' + hex_to_ascii(it.data);
-                    notifyBot(debug, message);
-                }
-
-            } catch (e) {
-                console.log('Error parsing JSON!');
-            }
-        } else {
-            console.log('Status:', res.statusCode);
-        }
-
-    }
-);
 
 function hex_to_ascii(str1){
     const hex  = str1.toString();
@@ -56,3 +29,53 @@ function notifyBot(debug, msg){
         }
     });
 }
+
+// requête toutes les x secondes
+async function scrape(init) {
+    if (init) {
+        await request(
+            {
+                url : url
+            },
+            function (error, res, body) {
+                if (res.statusCode === 200) {
+                    try {
+                        const data = JSON.parse(body);
+                        for(const it of data.data){
+                            const date = new Date(it.time);
+                            const parsedDate = date.getDay() + '/' + date.getMonth()+1 + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
+                        }
+
+                    } catch (e) {
+                        console.log('Error parsing JSON!');
+                    }
+                } else {
+                    console.log('Status:', res.statusCode);
+                }
+
+            }
+        );
+    }
+}
+
+(async () => {
+
+    console.log('Lancement du bot ...');
+    try {
+        await client.login(config.BOT_TOKEN);
+        console.log('Connecté à l\'API Discord.\n')
+    } catch (e) {
+        console.error('Impossible de se connecter à l\'API Discord: ' + e);
+        process.exit(1);
+    }
+
+    await scrape(true);
+    console.log('\nInitialisation terminée.' +
+        '\nRecherche d\'éventuelles alertes toutes les ' + config.frequency + 's en cours ...');
+
+    setInterval(async () => {
+        if (debug) console.log('Nouvelle requête commencée.');
+        await scrape(false);
+        if (debug) console.log('Requête terminée.');
+    }, config.frequency * 1000);
+})();
