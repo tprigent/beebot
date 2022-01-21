@@ -11,10 +11,13 @@ client.once('ready', () => {
     console.log('Ready!');
 });
 
+const channel = client.channels.cache.get(config.CHANNEL_ID);
+channel.send('test');
+
 client.login(config.BOT_TOKEN);
 
 /* SigFox API */
-const url = "https://" + constants.APIlogin + ":" + constants.APIpassword + "@" + constants.messageRoute;
+const url = 'https://' + constants.APIlogin + ':' + constants.APIpassword + '@' + constants.messageRoute;
 
 request(
     {
@@ -27,8 +30,8 @@ request(
 
                 for(const it of data.data){
                     const date = new Date(it.time);
-                    const parsedDate = date.getDay() + "/" + date.getMonth()+1 + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes();
-                    console.log(parsedDate + " - " + hex_to_ascii(it.data));
+                    const parsedDate = date.getDay() + '/' + date.getMonth()+1 + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
+                    console.log(parsedDate + ' - ' + hex_to_ascii(it.data));
                 }
 
             } catch (e) {
