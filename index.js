@@ -1,8 +1,7 @@
 /* Requirements */
 const request = require('request');
-const constants = require('./APIroutes');
+const config = require('./config');
 const { Client, Intents } = require('discord.js');
-const config = require('./discordConfig.json');
 
 let debug = true;
 
@@ -11,22 +10,14 @@ var lastMessageTime = '';
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
 /* SigFox API */
-const url = 'https://' + constants.APIlogin + ':' + constants.APIpassword + '@' + constants.messageRoute;
+const url = 'https://' + config.APIlogin + ':' + config.APIpassword + '@' + config.messageRoute;
 
-function hex_to_ascii(str1){
-    const hex  = str1.toString();
-    let str = '';
-    for (let n = 0; n < hex.length; n += 2) {
-        str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
-    }
-    return str;
-}
 
 function notifyBot(debug, msg){
     if(debug){
-        client.channels.cache.find(ch => ch.name === 'alertes-debug').send(msg);
+        client.channels.cache.find(ch => ch.name === config.channelName).send(msg);
     } else {
-        client.channels.cache.find(ch => ch.name === 'alertes').send(msg);
+        client.channels.cache.find(ch => ch.name === config.debugChannelName).send(msg);
     }
 }
 
@@ -70,7 +61,7 @@ async function scrape(init) {
 
     console.log('Lancement du bot ...');
     try {
-        await client.login(config.BOT_TOKEN);
+        await client.login(config.botToken);
         console.log('Connecté à l\'API Discord.\n')
     } catch (e) {
         console.error('Impossible de se connecter à l\'API Discord: ' + e);
