@@ -1,10 +1,12 @@
 /* Requirements */
 const request = require('request');
 const constants = require('./APIroutes');
-const { Client, Intents, Channel } = require('discord.js');
+const { Client, Intents } = require('discord.js');
 const config = require('./discordConfig.json');
 
-let debug = false;
+let debug = true;
+
+var lastMessageTime = '';
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
@@ -30,32 +32,39 @@ function notifyBot(debug, msg){
     });
 }
 
+function checkNewMessage(data){
+    if(data.data[0].time === lastMessageTime) return;
+    else {
+        notifyBot(debug, buildMessage('Activité suspecte autour de la ruche', data.data[0].time))
+    }
+}
+
+function buildMessage(msg, time){
+    const date = new Date(time);
+    const parsedDate = date.getDay() + '/' + date.getMonth()+1 + '/' + date.getFullYear()
+    const parsedHour = date.getHours() + ':' + date.getMinutes();
+    return '⚠️ **Nouvelle alerte détectée** ⚠️ \nType d\'alerte: ' + msg + '\nDate: ' + parsedDate + '\nHeure: ' + parsedHour;
+}
+
 // requête toutes les x secondes
 async function scrape(init) {
-    if (init) {
-        await request(
-            {
-                url : url
-            },
-            function (error, res, body) {
-                if (res.statusCode === 200) {
-                    try {
-                        const data = JSON.parse(body);
-                        for(const it of data.data){
-                            const date = new Date(it.time);
-                            const parsedDate = date.getDay() + '/' + date.getMonth()+1 + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
-                        }
-
-                    } catch (e) {
-                        console.log('Error parsing JSON!');
-                    }
-                } else {
-                    console.log('Status:', res.statusCode);
+    await request(
+        {
+            url : url
+        },
+        function (error, res, body) {
+            if (res.statusCode === 200) {
+                try {
+                    const data = JSON.parse(body);
+                    if(init) lastMessageTime = data.data[0].time;
+                    else checkNewMessage(data);
+                } catch (e) {
+                    console.log('Error parsing JSON!');
                 }
-
+            } else {
+                console.log('Status:', res.statusCode);
             }
-        );
-    }
+        });
 }
 
 (async () => {
