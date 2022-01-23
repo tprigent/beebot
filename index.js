@@ -23,19 +23,18 @@ function hex_to_ascii(str1){
 }
 
 function notifyBot(debug, msg){
-    client.on('ready', () => {
-        if(debug){
-            client.channels.cache.find(ch => ch.name === 'alertes-debug').send(msg);
-        } else {
-            client.channels.cache.find(ch => ch.name === 'alertes').send(msg);
-        }
-    });
+    if(debug){
+        client.channels.cache.find(ch => ch.name === 'alertes-debug').send(msg);
+    } else {
+        client.channels.cache.find(ch => ch.name === 'alertes').send(msg);
+    }
 }
 
 function checkNewMessage(data){
     if(data.data[0].time === lastMessageTime) return;
     else {
-        notifyBot(debug, buildMessage('Activité suspecte autour de la ruche', data.data[0].time))
+        notifyBot(debug, buildMessage('activité suspecte', data.data[0].time))
+        lastMessageTime = data.data[0].time;
     }
 }
 
@@ -43,7 +42,7 @@ function buildMessage(msg, time){
     const date = new Date(time);
     const parsedDate = date.getDay() + '/' + date.getMonth()+1 + '/' + date.getFullYear()
     const parsedHour = date.getHours() + ':' + date.getMinutes();
-    return '⚠️ **Nouvelle alerte détectée** ⚠️ \nType d\'alerte: ' + msg + '\nDate: ' + parsedDate + '\nHeure: ' + parsedHour;
+    return '⚠️ ***Nouvelle alerte détectée*** ⚠️ \n__Type d\'alerte__: ' + msg + '\n__Date__: ' + parsedDate + '\n__Heure__: ' + parsedHour;
 }
 
 // requête toutes les x secondes
