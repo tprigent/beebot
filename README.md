@@ -3,7 +3,7 @@ Bot that sends SigFox messages to a Discord server.
 
 In particular, it allows beehive owner to be alerted if suspicious activity is detected.
 
-<img width="413" alt="Capture d’écran 2022-01-23 à 23 09 33" src="https://user-images.githubusercontent.com/14911193/150699887-fe423189-55a3-49c5-b84b-314fd9d557f8.png">
+<img width="335" alt="Capture d’écran 2022-01-23 à 23 48 27" src="https://user-images.githubusercontent.com/14911193/150701198-4bef22cb-230a-498b-a479-0a3b1ff6c390.png">
 
 
 ## Table of Contents
