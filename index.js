@@ -9,10 +9,6 @@ var lastMessageTime = '';
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
-/* SigFox API */
-const url = 'https://' + config.APIlogin + ':' + config.APIpassword + '@' + config.messageRoute;
-
-
 function notifyBot(debug, msg){
     if(debug){
         client.channels.cache.find(ch => ch.name === config.channelName).send(msg);
@@ -40,7 +36,7 @@ function buildMessage(msg, time){
 async function scrape(init) {
     await request(
         {
-            url : url
+            url : config.url
         },
         function (error, res, body) {
             if (res.statusCode === 200) {
