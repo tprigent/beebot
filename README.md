@@ -47,7 +47,26 @@ npm install
 ```
 This will install the Node.js server.
 
-To make it run continuously and at server startup, check the following [tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-18-04)
+To make it run continuously and at server startup, check the following steps:
+1. Install PM2 (process manager for npm)
+```bash
+sudo npm install pm2@latest -g
+```
+2. Start using PM2 for your service
+```bash
+pm2 start beebot/index.js
+```
+3. Type the following line to create startup script
+```bash
+pm2 startup systemd
+```
+4. Copy-paste the suggested command line to enable PM2 on boot
+5. Save the PM2 process list with `pm2 save`
+7. Start the PM2 service and replace `usr` by your username
+```bash
+sudo systemctl start pm2-usr
+```
+NB: You can manage PM2 with the commands `pm2 list`, `pm2 monit`, `pm2 stop [service-id]`, `pm2 restart [service-id]`...
 
 ## References
 This bot was inspired by the [Insanotedur project](https://github.com/truelossless/insanotedur), 
