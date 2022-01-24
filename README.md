@@ -47,36 +47,7 @@ npm install
 ```
 This will install the Node.js server.
 
-To make it run continuously and at server startup, check the following steps:
-1. Create a file called `beebot.service` in a safe folder
-```editorconfig
-#!/usr/bin/env node
-
-[Unit]
-Description=Beebot
-
-[Service]
-ExecStart=/path/to/your/beebot/folder/index.js
-Restart=always
-User=nobody
-# Note Debian/Ubuntu uses 'nogroup', RHEL/Fedora uses 'nobody'
-Group=nogroup
-Environment=PATH=/usr/bin:/usr/local/bin
-Environment=NODE_ENV=production
-WorkingDirectory=/path/to/your/beebot/folder
-
-[Install]
-WantedBy=multi-user.target
-```
-2. Copy it in the folder `/etc/systemd/system/`
-3. Enable it at system startup
-```bash
-systemctl enable beebot.service
-```
-4. Start it !
-```bash
-systemctl start beebot.service
-```
+To make it run continuously and at server startup, check the following [tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-18-04)
 
 ## References
 This bot was inspired by the [Insanotedur project](https://github.com/truelossless/insanotedur), 
