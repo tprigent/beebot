@@ -54,7 +54,7 @@ sudo npm install pm2@latest -g
 ```
 2. Start using PM2 for your service
 ```bash
-pm2 start beebot/index.js
+pm2 start beebot/beebot.js
 ```
 3. Type the following line to create startup script
 ```bash
