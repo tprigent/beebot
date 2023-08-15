@@ -1,9 +1,17 @@
 const { Client, Intents } = require('discord.js');
 const config = require('./config');
-const { processUserInput } = require('./discordHelper');
-const { unitMonitor } = require('./sigfoxHelper');
+const { processUserInput, publishAlert } = require('./discordHelper');
+const { checkNewMessages } = require('./sigfoxHelper');
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+
+async function checkAlerts() {
+  const newMessages = await checkNewMessages();
+
+  for (let i=0; i<newMessages.length; i++) {
+    publishAlert(client, newMessages[i]);
+  }
+}
 
 // Bot setup
 client.once('ready', () => {
@@ -19,5 +27,5 @@ client.on('message', async (message) => {
 // Start bot
 client.login(config.discordParams.botToken)
   .then(() => {
-    setInterval(unitMonitor, 5000, client);
+    setInterval(checkAlerts, 5000);
   });

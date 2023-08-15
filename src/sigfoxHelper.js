@@ -20,37 +20,30 @@ async function getLastMessage(deviceID) {
   return output;
 }
 
-async function checkNewMessage(deviceID) {
-  const lastMessages = await getLastMessage(deviceID);
-  const storedSeqNumber = seqNumberMap.get(deviceID);
-  const lastSeqNumber = lastMessages.seqNumber;
-  seqNumberMap.set(deviceID, lastSeqNumber);
-  return lastSeqNumber > storedSeqNumber;
-}
-
 async function checkNewMessages() {
-  const devicesWithUpdate = [];
+  const lastMessages = [];
+
+  // iterate over all devices by ID according to config
   for (let i = 0; i < sigfoxParams.devices.length; i++) {
-    if (await checkNewMessage(sigfoxParams.devices[i].id)) {
-      devicesWithUpdate.push(sigfoxParams.devices[i].id);
-    }
-  }
-  return devicesWithUpdate;
-}
 
-function generateAlerts(client, devicesWithUpdate) {
-  if (devicesWithUpdate) {
-    for (let i = 0; i < devicesWithUpdate.length; i++) {
-      publishAlert(client, devicesWithUpdate[i]);
-    }
-  }
-}
+    // get last message for each device
+    const deviceID = sigfoxParams.devices[i].id;
+    const lastMessage = await getLastMessage(deviceID);
 
-async function unitMonitor(client) {
-  const devicesWithUpdate = await checkNewMessages();
-  generateAlerts(client, devicesWithUpdate);
+    // check if new message
+    const storedSeqNumber = seqNumberMap.get(deviceID);
+    const lastSeqNumber = lastMessage.seqNumber;
+    seqNumberMap.set(deviceID, lastSeqNumber);
+
+    // if so, save the message
+    if (lastSeqNumber > storedSeqNumber) {
+      lastMessages.push(lastMessage);
+    }
+
+  }
+  return lastMessages;
 }
 
 module.exports = {
-  unitMonitor,
+  checkNewMessages,
 };
